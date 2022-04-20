@@ -6,29 +6,30 @@
       </a>
 
       <nav class="d-flex w-25 justify-content-end">
-        <button @click="hideModal" class="btn btn-success text-white" href="#">Pricing</button>
-        <my-change v-model="selectedOption" :options="options"></my-change>
+        <button @click="hideModal" class="btn btn-success text-white mx-3" href="#">Pricing</button>
+        <my-change @changeOption="changeOption" :selectedOption="selectedOption" :options="options"></my-change>
       </nav>
     </div>
 </template>
 
 <script>
     export default {
-      data(){
-        return{
-          selectedOption: "",
-          options: [
-            {id: 0, name: "Slamandir", value: "no1"},
-            {id: 1, name: "Kapuchon", value: "no2"},
-            {id: 2, name: "Marka", value: "no3"}
-          ],
+      props:{
+        selectedOption:{
+          type: String
+        },
+        options:{
+          type: Array
         }
       },
       methods:{
          hideModal(){
            this.$emit("update:modalVisibili", true)
          },
-      }
+         changeOption(value){
+           this.$emit("update:selectedOption", value)
+         }
+      },
     }
 </script>
 

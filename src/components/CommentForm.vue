@@ -49,6 +49,14 @@ export default {
                 content: "",
             }
         },
+    },
+    watch:{
+        comment:{
+            handler(newValue){
+                console.log(newValue);
+            },
+            deep: true
+        }
     }
 }
 </script>

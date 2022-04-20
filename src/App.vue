@@ -1,7 +1,10 @@
 <template>
     <navbar 
-        class="container"
+        class="container mt-3"
         v-model:modalVisibili="modalVisibili"
+        :selectedOption="selectedOption"
+        :options="options"
+        v-model:selectedOption="selectedOption"
     />
 
     <my-modal :show="modalVisibili" v-model:modalVisibili="modalVisibili">
@@ -11,7 +14,7 @@
     </my-modal> 
 
     <comment-list v-if="!isLoading"
-        :comments="comments"
+        :comments="optionSorted"
         @remove="delComment"
     />
     <div v-else class="d-flex justify-content-center">
@@ -44,6 +47,11 @@ export default {
             comments: [],
             modalVisibili: false,
             isLoading: false,
+            selectedOption: "",
+            options: [
+                {id: 0, name: "Name", value: "name"},
+                {id: 1, name: "Email", value: "email"},
+            ],
         }
     },
     methods: {
@@ -52,9 +60,6 @@ export default {
         },
         delComment(comment){
             this.comments = this.comments.filter(item=> item.id !== comment.id)
-        },
-        selected(option){
-            this.selectedOption = option
         },
         async getComment(){
             try{
@@ -71,6 +76,28 @@ export default {
     },
     mounted(){
         this.getComment();
+    },
+    computed:{
+        optionSorted(){
+            return [...this.comments].sort((comm1, comm2)=>{
+                if(this.selectedOption === "name"){
+                    return comm1.name.localeCompare(comm2.name)
+                }else{
+                    return comm1.email.localeCompare(comm2.email)
+                }  
+            })
+        }
+    },
+    watch:{
+        selectedOption(newValue){
+            this.comments.sort((comm1, comm2)=>{
+                if(newValue === "name"){
+                    return comm1.name.localeCompare(comm2.name)
+                }else{
+                    return comm1.email.localeCompare(comm2.email)
+                }  
+            })
+        }
     }
 }
 </script>

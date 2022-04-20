@@ -20,7 +20,7 @@
         },
         methods:{
             changeOption(e){
-                this.$emit("update:selectedOption", e.target.value)
+                this.$emit("changeOption", e.target.value)
             }
         }
     }
