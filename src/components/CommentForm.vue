@@ -1,8 +1,9 @@
 <template>
     <div class="w-75 mx-auto formaa mt-5">
         <form @submit.prevent>
+            <h2>Add Comment</h2>
             <my-input
-                v-model="comment.name"
+                v-model.trim="comment.name"
                 type="text" 
                 placeholder="Inter name..."
                 class="form-control mb-3"
