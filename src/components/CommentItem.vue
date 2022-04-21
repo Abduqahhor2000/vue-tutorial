@@ -3,7 +3,7 @@
         <div>
             <div><b>Name:</b> {{comment.name}}</div>
             <div><b>Email:</b> {{comment.email}}</div>
-            <div><b>Content:</b> {{comment.content}}</div>
+            <div><b>Content:</b> {{comment.body}}</div>
         </div>
         <div>
             <button class="btn btn-danger" @click="$emit('remove', comment)">Delete</button>

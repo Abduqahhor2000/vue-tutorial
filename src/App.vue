@@ -11,10 +11,13 @@
         <comment-form 
             @addComment="addComment"
         />
-    </my-modal> 
+    </my-modal>
+    <div class="d-flex justifiy-content-center">
+        <input type="text" class="m-auto" v-model="searchName"/>
+    </div> 
 
     <comment-list v-if="!isLoading"
-        :comments="optionSorted"
+        :comments="sortAndSearchComments"
         @remove="delComment"
     />
     <div v-else class="d-flex justify-content-center">
@@ -26,6 +29,11 @@
         </div>
         <div class="spinner-grow text-success" role="status">
           <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <div class="container d-flex">
+        <div @click="changePage(pagebutton)" class="btn btn-outline-primary mx-1" :class="{'btn-primary text-white' : pagebutton === page}" v-for="pagebutton in totalPages" :key="pagebutton.id">
+            {{pagebutton}}
         </div>
     </div>
 </template>
@@ -45,9 +53,13 @@ export default {
     data(){
         return{
             comments: [],
+            selectedOption: "",
+            searchName: "",
+            totalPages: 0,
+            limit: 50,
+            page: 1,
             modalVisibili: false,
             isLoading: false,
-            selectedOption: "",
             options: [
                 {id: 0, name: "Name", value: "name"},
                 {id: 1, name: "Email", value: "email"},
@@ -61,12 +73,22 @@ export default {
         delComment(comment){
             this.comments = this.comments.filter(item=> item.id !== comment.id)
         },
+        changePage(value){
+            this.page = value
+            this.getComment()
+        },
         async getComment(){
             try{
                 this.isLoading = true
                 setTimeout(async()=>{
-                    const {data} = await axios.get("https://jsonplaceholder.typicode.com/users?_limit=10")
-                    this.comments = data
+                    const data = await axios.get("https://jsonplaceholder.typicode.com/comments", {
+                        params:{
+                            _limit: this.limit,
+                            _page: this.page, 
+                        }
+                    })
+                    this.totalPages = Math.ceil(data.headers["x-total-count"] / this.limit)
+                    this.comments = data.data
                     this.isLoading = false
                 }, 2000)
             }catch(e){
@@ -82,22 +104,28 @@ export default {
             return [...this.comments].sort((comm1, comm2)=>{
                 if(this.selectedOption === "name"){
                     return comm1.name.localeCompare(comm2.name)
-                }else{
+                }else if(this.selectedOption === "email"){
                     return comm1.email.localeCompare(comm2.email)
                 }  
+            })
+        },
+        sortAndSearchComments(){
+            return this.optionSorted.filter((comment)=>{
+                return comment.name.toLowerCase().includes(this.searchName.toLowerCase()) || 
+                       comment.email.toLowerCase().includes(this.searchName.toLowerCase())    
             })
         }
     },
     watch:{
-        selectedOption(newValue){
-            this.comments.sort((comm1, comm2)=>{
-                if(newValue === "name"){
-                    return comm1.name.localeCompare(comm2.name)
-                }else{
-                    return comm1.email.localeCompare(comm2.email)
-                }  
-            })
-        }
+        // selectedOption(newValue){
+        //     this.comments.sort((comm1, comm2)=>{
+        //         if(newValue === "name"){
+        //             return comm1.name.localeCompare(comm2.name)
+        //         }else{
+        //             return comm1.email.localeCompare(comm2.email)
+        //         }  
+        //     })
+        // }
     }
 }
 </script>
