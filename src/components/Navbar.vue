@@ -6,30 +6,15 @@
       </a>
 
       <nav class="d-flex w-25 justify-content-end">
-        <button @click="hideModal" class="btn btn-success text-white mx-3" href="#">Pricing</button>
-        <my-change @changeOption="changeOption" :selectedOption="selectedOption" :options="options"></my-change>
+        <router-link to="/" class="btn btn-outline-success mx-3">Home</router-link>
+        <router-link to="/main" class="btn btn-outline-success">Main</router-link>
       </nav>
     </div>
 </template>
 
 <script>
     export default {
-      props:{
-        selectedOption:{
-          type: String
-        },
-        options:{
-          type: Array
-        }
-      },
-      methods:{
-         hideModal(){
-           this.$emit("update:modalVisibili", true)
-         },
-         changeOption(value){
-           this.$emit("update:selectedOption", value)
-         }
-      },
+
     }
 </script>
 

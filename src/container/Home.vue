@@ -1,19 +1,13 @@
 <template>
-    <navbar 
-        class="container mt-3"
-        v-model:modalVisibili="modalVisibili"
-        :selectedOption="selectedOption"
-        :options="options"
-        v-model:selectedOption="selectedOption"
-    />
-
     <my-modal :show="modalVisibili" v-model:modalVisibili="modalVisibili">
         <comment-form 
             @addComment="addComment"
         />
     </my-modal>
-    <div class="d-flex justifiy-content-center">
-        <input type="text" class="m-auto" v-model="searchName"/>
+    <div class="d-flex justifiy-content-center container">
+        <input type="text" class="form-control mx-3" placeholder="Search..." v-model="searchName"/>
+        <my-change @changeOption="changeOption" :selectedOption="selectedOption" :options="options"></my-change>
+        <button @click="hideModal" class="btn btn-success text-white mx-3" href="#">Pricing</button>
     </div> 
 
     <comment-list v-if="!isLoading"
@@ -32,8 +26,10 @@
         </div>
     </div>
     <div class="container d-flex">
-        <div @click="changePage(pagebutton)" class="btn btn-outline-primary mx-1" :class="{'btn-primary text-white' : pagebutton === page}" v-for="pagebutton in totalPages" :key="pagebutton.id">
-            {{pagebutton}}
+        <div @click="changePage(pagebutton)" :class="{'d-none' : ((page - 5) > pagebutton) || ((page + 5 ) < pagebutton)}"  v-for="pagebutton in totalPages" :key="pagebutton.id">
+            <div class="btn btn-outline-primary mx-1" :class="{'btn-primary text-white' : pagebutton === page}">
+                {{pagebutton}}
+            </div>
         </div>
     </div>
 </template>
@@ -56,7 +52,7 @@ export default {
             selectedOption: "",
             searchName: "",
             totalPages: 0,
-            limit: 50,
+            limit: 10,
             page: 1,
             modalVisibili: false,
             isLoading: false,
@@ -67,6 +63,12 @@ export default {
         }
     },
     methods: {
+        hideModal(){
+           this.modalVisibili = true
+         },
+        changeOption(value){
+           this.selectedOption = value
+        }, 
         addComment(comment){
             this.comments.push(comment)
         },
@@ -90,7 +92,7 @@ export default {
                     this.totalPages = Math.ceil(data.headers["x-total-count"] / this.limit)
                     this.comments = data.data
                     this.isLoading = false
-                }, 2000)
+                }, 1000)
             }catch(e){
                 console.log("vay vaaaay");
             }
